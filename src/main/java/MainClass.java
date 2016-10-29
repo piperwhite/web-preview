@@ -13,7 +13,6 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		String url = args[0];
-		String htmlPreview="";
 		try {
 			Document doc = Jsoup.connect(url).get();
 			
@@ -21,18 +20,22 @@ public class MainClass {
 		    String imageUrl = extractImage(doc);
 		    String description = extractDescription(doc);
 		    
-		    htmlPreview= "<html><body><h1>"+title+"</h1><h2>"+description+"</h2><img src=\""+imageUrl+"\"/></body></html>";
-	    
-		    File htmlFile= new File("imagePreview.html");
-		    FileWriter fw = new FileWriter(htmlFile.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(htmlPreview);
-			bw.close();
+		    generateHTML(title, imageUrl, description);
 			
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static void generateHTML(String title, String imageUrl, String description) throws IOException {
+		String htmlPreview= "<html><body><h1>"+title+"</h1><h2>"+description+"</h2><img src=\""+imageUrl+"\"/></body></html>";
+   
+		File htmlFile= new File("imagePreview.html");
+		FileWriter fw = new FileWriter(htmlFile.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(htmlPreview);
+		bw.close();
 	}
 
 	private static String extractDescription(Document doc) {
@@ -64,7 +67,7 @@ public class MainClass {
 	}
 
 	private static String extractTitle(Document doc) {
-		String title= "";
+		String title="";
 		Elements elementTitle = doc.select("meta[property=og:title],meta[name=title]");
 		if(elementTitle!=null){
 			title = elementTitle.attr("content");
